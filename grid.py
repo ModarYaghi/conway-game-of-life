@@ -1,4 +1,10 @@
-import pygame  # Importing pygame
+"""
+Creating the grid and fill it with 1s and 0s.
+"""
+
+import random
+
+import pygame
 
 
 class Grid:
@@ -29,3 +35,12 @@ class Grid:
                         self.cell_size - 1,  # height. -1 makes cell height smaller
                     ),
                 )
+
+    def fill_random(self):
+        """Filling the grid with random 1s and 0s"""
+
+        for row in range(self.rows):
+            for column in range(self.columns):
+                self.cells[row][column] = random.choice(
+                    [1, 0, 0, 0]
+                )  # 25% of the cells will be filled with 1

@@ -30,7 +30,6 @@ clock = pygame.time.Clock()
 
 # Create Grid object
 simulation = Simulation(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
-simulation.grid.cells[3][59] = 1
 
 # Simulation Loop
 while True:
@@ -47,6 +46,7 @@ while True:
                 sys.exit()
 
     # 2. Updating State
+    simulation.update()
 
     # 3. Drawing
     window.fill(GREY)

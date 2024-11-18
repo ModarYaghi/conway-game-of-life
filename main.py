@@ -17,10 +17,10 @@ from simulation import Simulation
 
 pygame.init()
 
-GREY = (29, 29, 29)
-WINDOW_WIDTH = 1500
-WINDOW_HEIGHT = 1500
-CELL_SIZE = 25
+BACKGROUND_COLOR = (0, 0, 0)
+WINDOW_WIDTH = 750
+WINDOW_HEIGHT = 750
+CELL_SIZE = 15
 FPS = 12
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -38,6 +38,12 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+    
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            row = pos[1] // CELL_SIZE
+            column = pos[0] // CELL_SIZE
+            simulation.toggle_cell(row, column)
 
         # if a key is pressed
         if event.type == pygame.KEYDOWN:
@@ -45,11 +51,34 @@ while True:
                 pygame.quit()
                 sys.exit()
 
+            elif event.key == pygame.K_RETURN:
+                simulation.start()
+                pygame.display.set_caption(f"Game of Life is running on FPS {FPS}")
+
+            elif event.key == pygame.K_SPACE:
+                simulation.stop()
+                pygame.display.set_caption("Game of Life has stopped")
+            
+            elif event.key == pygame.K_f:
+                FPS += 2
+                pygame.display.set_caption(f"Game of Life is running on FPS {FPS}")
+
+            elif event.key == pygame.K_s:
+                if FPS > 5:
+                    FPS -= 2
+                pygame.display.set_caption(f"Game of Life is running on FPS {FPS}")
+
+            elif event.key == pygame.K_r:
+                simulation.create_random_state()
+            
+            elif event.key == pygame.K_c:
+                simulation.clear()
+
     # 2. Updating State
     simulation.update()
 
     # 3. Drawing
-    window.fill(GREY)
+    window.fill(BACKGROUND_COLOR)
     simulation.draw(window)  # calling drow method from Grid
 
     pygame.display.update()

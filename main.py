@@ -13,13 +13,14 @@ import sys
 
 import pygame
 
+from color_set import Colors
 from simulation import Simulation
 
 pygame.init()
 
-BACKGROUND_COLOR = (0, 0, 0)
-WINDOW_WIDTH = 750
-WINDOW_HEIGHT = 750
+BACKGROUND_COLOR = Colors.BLACK.value
+WINDOW_WIDTH = 1500
+WINDOW_HEIGHT = 1500
 CELL_SIZE = 15
 FPS = 12
 
@@ -38,7 +39,7 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-    
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
             row = pos[1] // CELL_SIZE
@@ -51,14 +52,14 @@ while True:
                 pygame.quit()
                 sys.exit()
 
-            elif event.key == pygame.K_RETURN:
-                simulation.start()
-                pygame.display.set_caption(f"Game of Life is running on FPS {FPS}")
-
             elif event.key == pygame.K_SPACE:
-                simulation.stop()
-                pygame.display.set_caption("Game of Life has stopped")
-            
+                if simulation.is_running():
+                    simulation.stop()
+                    pygame.display.set_caption("Game of Life has stopped")
+                else:
+                    simulation.start()
+                    pygame.display.set_caption(f"Game of Life is running on FPS {FPS}")
+
             elif event.key == pygame.K_f:
                 FPS += 2
                 pygame.display.set_caption(f"Game of Life is running on FPS {FPS}")
@@ -70,9 +71,12 @@ while True:
 
             elif event.key == pygame.K_r:
                 simulation.create_random_state()
-            
+
             elif event.key == pygame.K_c:
                 simulation.clear()
+
+            elif event.key == pygame.K_g:
+                simulation.grid.toggle_grid_lines()
 
     # 2. Updating State
     simulation.update()

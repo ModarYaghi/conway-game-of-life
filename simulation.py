@@ -4,21 +4,21 @@ from grid import Grid
 
 
 class Simulation:
-    """Simulation class"""
+    """Simulation class with Sparse Representation"""
 
     def __init__(self, width, height, cell_size) -> None:
         self.grid = Grid(width, height, cell_size)
-        self.temp_grid = Grid(width, height, cell_size)
+        self.temp_grid = Grid(width, height, cell_size)  # A temporary grid for updates
         self.rows = height // cell_size
         self.columns = width // cell_size
         self.run = False
 
     def draw(self, window):
-        """Draw method"""
+        """Draw the current state of the grid on the window"""
         self.grid.draw(window)
 
-    def count_live_neighbors(self, grid, row, column):
-        """Count live neighbor"""
+    def count_live_neighbors(self, row, column):
+        """Count live neighbors for a given cell"""
 
         live_neighbors = 0
 
@@ -34,9 +34,12 @@ class Simulation:
         ]
 
         for offset in neighbor_offsets:
-            new_row = (row + offset[0]) % self.rows
-            new_column = (column + offset[1]) % self.columns
-            if self.grid.cells[new_row][new_column] == 1:  # then this neighbor is live
+            neighbor_row = (row + offset[0]) % self.rows
+            neighbor_column = (column + offset[1]) % self.columns
+            if (
+                neighbor_row,
+                neighbor_column,
+            ) in self.grid.cells:  # then this neighbor is live
                 live_neighbors += 1  # increasing the number of live neighbors by 1
 
         return live_neighbors
@@ -44,47 +47,83 @@ class Simulation:
     def update(self):
         """Updating the simulation state according to the rules"""
         if self.is_running():
-            for row in range(self.rows):
-                for column in range(self.columns):
-                    live_neighbors = self.count_live_neighbors(self.grid, row, column)
-                    cell_value = self.grid.cells[row][column]
+            #     for row in range(self.rows):
+            #         for column in range(self.columns):
+            #             live_neighbors = self.count_live_neighbors(self.grid, row, column)
+            #             cell_value = self.grid.cells[row][column]
+            #
+            #             if cell_value == 1:
+            #                 if live_neighbors > 3 or live_neighbors < 2:
+            #                     self.temp_grid.cells[row][column] = 0
+            #                 else:
+            #                     self.temp_grid.cells[row][column] = 1
+            #             else:
+            #                 if live_neighbors == 3:
+            #                     self.temp_grid.cells[row][column] = 1
+            #                 else:
+            #                     self.temp_grid.cells[row][column] = 0
+            #     for row in range(self.rows):
+            #         for column in range(self.columns):
+            #             self.grid.cells[row][column] = self.temp_grid.cells[row][column]
+            self.temp_grid.clear()
+            # Iterate over all live cells and their neighbors
+            cells_to_check = set(self.grid.cells.keys())
 
-                    if cell_value == 1:
-                        if live_neighbors > 3 or live_neighbors < 2:
-                            self.temp_grid.cells[row][column] = 0
-                        else:
-                            self.temp_grid.cells[row][column] = 1
-                    else:
-                        if live_neighbors == 3:
-                            self.temp_grid.cells[row][column] = 1
-                        else:
-                            self.temp_grid.cells[row][column] = 0
-            for row in range(self.rows):
-                for column in range(self.columns):
-                    self.grid.cells[row][column] = self.temp_grid.cells[row][column]
+            for row, column in self.grid.cells.keys():
+                # Add neighbors to the cells to be checked
+                neighbor_offset = [
+                    (-1, -1),
+                    (-1, 0),
+                    (-1, 1),
+                    (0, -1),
+                    (0, 1),
+                    (1, -1),
+                    (1, 0),
+                    (1, 1),
+                ]
+                for offset in neighbor_offset:
+                    neighbor_row = (row + offset[0]) % self.rows
+                    neighbor_column = (column + offset[1]) % self.columns
+                    cells_to_check.add((neighbor_row, neighbor_column))
+
+            for row, column in cells_to_check:
+                live_neighbors = self.count_live_neighbors(row, column)
+                if (row, column) in self.grid.cells:
+                    # Current cell is alive
+                    if live_neighbors in (2, 3):
+                        self.temp_grid.cells[(row, column)] = 1
+                else:
+                    # Current cell is dead
+                    if live_neighbors == 3:
+                        self.temp_grid.cells[(row, column)] = 1
+
+            # Swap the grids
+            self.grid, self.temp_grid = self.temp_grid, self.grid
+
     def is_running(self):
         """To check if the simulation is running"""
         return self.run
 
     def start(self):
-        """"A switch key to start simulation"""
+        """ "A switch key to start simulation"""
         self.run = True
 
     def stop(self):
-        """"A switch key to stop simulation"""
+        """ "A switch key to stop simulation"""
         self.run = False
 
     def clear(self):
         """A switch key to clear the grid"""
-        if self.is_running() == False:
+        if not self.is_running():
             self.grid.clear()
 
     def create_random_state(self):
-        """Create a grid with random state"""
-        if self.is_running() == False:
+        """Create a random state for the grid"""
+        if not self.is_running():
             self.grid.fill_random()
-    
+
     def toggle_cell(self, row, column):
-        """Toggle which cell is a live"""
-        if self.is_running() == False:
+        """Toggle the state of a cell"""
+        if not self.is_running():
             self.grid.toggle_cell(row, column)
+

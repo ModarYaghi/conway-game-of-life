@@ -13,12 +13,12 @@ class Simulation:
         self.columns = width // cell_size
         self.run = False
 
-    def draw(self, window):
-        """Draw the current state of the grid on the window"""
+    def draw_cells(self, window):
+        """Draw only the live cells on the window"""
         self.grid.draw(window)
 
     def count_live_neighbors(self, row, column):
-        """Count live neighbors for a given cell"""
+        """Count the number of live neighbors for a given cell"""
 
         live_neighbors = 0
 
@@ -45,26 +45,8 @@ class Simulation:
         return live_neighbors
 
     def update(self):
-        """Updating the simulation state according to the rules"""
+        """Update the simulation state according to the rules"""
         if self.is_running():
-            #     for row in range(self.rows):
-            #         for column in range(self.columns):
-            #             live_neighbors = self.count_live_neighbors(self.grid, row, column)
-            #             cell_value = self.grid.cells[row][column]
-            #
-            #             if cell_value == 1:
-            #                 if live_neighbors > 3 or live_neighbors < 2:
-            #                     self.temp_grid.cells[row][column] = 0
-            #                 else:
-            #                     self.temp_grid.cells[row][column] = 1
-            #             else:
-            #                 if live_neighbors == 3:
-            #                     self.temp_grid.cells[row][column] = 1
-            #                 else:
-            #                     self.temp_grid.cells[row][column] = 0
-            #     for row in range(self.rows):
-            #         for column in range(self.columns):
-            #             self.grid.cells[row][column] = self.temp_grid.cells[row][column]
             self.temp_grid.clear()
             # Iterate over all live cells and their neighbors
             cells_to_check = set(self.grid.cells.keys())
@@ -126,4 +108,3 @@ class Simulation:
         """Toggle the state of a cell"""
         if not self.is_running():
             self.grid.toggle_cell(row, column)
-

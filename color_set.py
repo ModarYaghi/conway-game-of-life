@@ -12,4 +12,5 @@ class Colors(Enum):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     DARK20 = (20, 20, 20)
+    DARK35 = (35, 35, 35)
     LIGHT181 = (181, 181, 181)

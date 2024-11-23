@@ -14,11 +14,12 @@ import sys
 import pygame
 
 from color_set import Colors
+from grid_lines import GridLines
 from simulation import Simulation
 
 pygame.init()
 
-BACKGROUND_COLOR = Colors.BLACK.value
+BACKGROUND_COLOR = Colors.DARK20.value
 WINDOW_WIDTH = 1500
 WINDOW_HEIGHT = 1500
 CELL_SIZE = 15
@@ -27,10 +28,12 @@ FPS = 12
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Game of Life")
 
+# Create Simulation and Grid Lines
+simulation = Simulation(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
+grid_lines = GridLines(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
+
 clock = pygame.time.Clock()
 
-# Create Grid object
-simulation = Simulation(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
 
 # Simulation Loop
 while True:
@@ -76,14 +79,18 @@ while True:
                 simulation.clear()
 
             elif event.key == pygame.K_g:
-                simulation.grid.toggle_grid_lines()
+                grid_lines.toggle_visibility()
 
     # 2. Updating State
-    simulation.update()
+    if simulation.is_running():
+        simulation.update()
 
     # 3. Drawing
     window.fill(BACKGROUND_COLOR)
-    simulation.draw(window)  # calling drow method from Grid
+    grid_surface = grid_lines.get_surface()
+    if grid_surface:
+        window.blit(grid_surface, (0, 0))  # Draw the static grid lines
+    simulation.draw_cells(window)  # calling drow method from Grid
 
     pygame.display.update()
     clock.tick(FPS)

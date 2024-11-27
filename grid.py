@@ -14,7 +14,6 @@ class Grid:
 
     LIVE_CELL_COLOR = Colors.LIGHT181.value
     DEAD_CELL_COLOR = Colors.DARK20.value
-    GRID_LINE_COLOR = Colors.DARK35.value
 
     def __init__(self, width, height, cell_size):
         self.rows = height // cell_size  # no. of rows: 1500 // 25 = 60
@@ -22,13 +21,22 @@ class Grid:
         self.cell_size = cell_size
         self.cells = {}  # Dictionary to store only live cells
 
-    def draw(self, window):
-        """Draw all live cells on the given window, including static grid lines if enabled."""
+        # Create a Surface to hlod all live cells
+        self.cell_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.cell_surface.fill((0, 0, 0, 0))  # Make it transparent initially
 
-        # Draw all live cells
+    def draw(self):
+        """Update the cell surface by drawing all live cells onto it."""
+
+        # Clear previous cell drawing
+        self.cell_surface.fill(
+            (0, 0, 0, 0)
+        )  # Make the entire surface transparent again.
+
+        # Draw each live cell on the surface
         for row, column in self.cells:
             pygame.draw.rect(
-                window,
+                self.cell_surface,
                 Grid.LIVE_CELL_COLOR,
                 (
                     column * self.cell_size + 1,  # x position.
@@ -37,6 +45,10 @@ class Grid:
                     self.cell_size - 2,  # height.
                 ),
             )
+
+    def get_surface(self):
+        """Get the surface containing the draw cells."""
+        return self.cell_surface
 
     def fill_random(self):
         """Filling the grid with random 1s and 0s"""

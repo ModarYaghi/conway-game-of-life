@@ -12,7 +12,7 @@ class Simulation:
         self.columns = width // cell_size
         self.run = False
 
-        # New addition: Set to track live cells
+        # Set to track live cells
         self.live_cells = set()
 
         self.neighbor_offsets = [
@@ -26,28 +26,9 @@ class Simulation:
             (1, 1),
         ]
 
-    def draw_cells(self, window):
-        """Draw only the live cells on the window"""
-        self.grid.draw(window)
-
-    def count_live_neighbors(self, row, column):
-        """Count the number of live neighbors for a given cell"""
-
-        live_neighbors = 0
-
-        for offset in self.neighbor_offsets:
-            neighbor_row = (row + offset[0]) % self.rows
-            neighbor_column = (column + offset[1]) % self.columns
-            if (
-                neighbor_row,
-                neighbor_column,
-            ) in self.grid.cells:  # if this neighbor is live
-                live_neighbors += 1
-
-        return live_neighbors
-
     def update(self):
         """Update the simulation state according to the rules"""
+
         if self.is_running():
             new_live_cells = set()
             cells_to_check = set(self.live_cells)
@@ -75,6 +56,25 @@ class Simulation:
             self.live_cells = new_live_cells
             self.grid.cells = {cell: 1 for cell in self.live_cells}
 
+            # Update the cell surface after the state update
+            self.grid.draw()
+
+    def count_live_neighbors(self, row, column):
+        """Count the number of live neighbors for a given cell"""
+
+        live_neighbors = 0
+
+        for offset in self.neighbor_offsets:
+            neighbor_row = (row + offset[0]) % self.rows
+            neighbor_column = (column + offset[1]) % self.columns
+            if (
+                neighbor_row,
+                neighbor_column,
+            ) in self.grid.cells:  # if this neighbor is live
+                live_neighbors += 1
+
+        return live_neighbors
+
     def is_running(self):
         """To check if the simulation is running"""
         return self.run
@@ -98,6 +98,7 @@ class Simulation:
         if not self.is_running():
             self.grid.fill_random()
             self.live_cells = set(self.grid.cells.keys())
+            self.grid.draw()
 
     def toggle_cell(self, row, column):
         """Toggle the state of a cell"""
@@ -108,3 +109,9 @@ class Simulation:
             else:
                 self.live_cells.add((row, column))
                 self.grid.cells[(row, column)] = 1
+
+            self.grid.draw()
+
+    def get_cells_surface(self):
+        """Get the surface containing all live cells for rendering."""
+        return self.grid.get_surface()

@@ -85,14 +85,17 @@ while True:
     if simulation.is_running():
         simulation.update()
 
-    # 3. Drawing
+    # 3. Drawing Section
     window.fill(BACKGROUND_COLOR)
+
+    # Draw the static grid lines if they are visible
     grid_surface = grid_lines.get_surface()
 
     if grid_surface:
         window.blit(grid_surface, (0, 0))  # Draw the static grid lines
 
-    simulation.draw_cells(window)  # calling drow method from Grid
+    # Draw all the cells using the batched surface
+    window.blit(simulation.get_cells_surface(), (0, 0))
 
     pygame.display.update()
     clock.tick(FPS)

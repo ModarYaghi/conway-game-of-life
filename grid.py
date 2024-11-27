@@ -31,12 +31,10 @@ class Grid:
                 window,
                 Grid.LIVE_CELL_COLOR,
                 (
-                    column * self.cell_size + 1,  # x position offset to show grid lines
-                    row * self.cell_size + 1,  # y position offset to show grid lines
-                    self.cell_size
-                    - 2,  # width. Slight adjustment to leave room for gird lines
-                    self.cell_size
-                    - 2,  # height. Slight adjustment to leave room for grid lines
+                    column * self.cell_size + 1,  # x position.
+                    row * self.cell_size + 1,  # y position.
+                    self.cell_size - 2,  # width.
+                    self.cell_size - 2,  # height.
                 ),
             )
 
@@ -53,10 +51,3 @@ class Grid:
     def clear(self):
         """Clear the grid"""
         self.cells.clear()
-
-    def toggle_cell(self, row, column):
-        """Toggle the state of a cell"""
-        if (row, column) in self.cells:
-            del self.cells[(row, column)]
-        else:
-            self.cells[(row, column)] = 1

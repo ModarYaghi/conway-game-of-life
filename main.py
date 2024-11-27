@@ -88,8 +88,10 @@ while True:
     # 3. Drawing
     window.fill(BACKGROUND_COLOR)
     grid_surface = grid_lines.get_surface()
+
     if grid_surface:
         window.blit(grid_surface, (0, 0))  # Draw the static grid lines
+
     simulation.draw_cells(window)  # calling drow method from Grid
 
     pygame.display.update()

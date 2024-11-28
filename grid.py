@@ -21,7 +21,7 @@ class Grid:
         self.cell_size = cell_size
         self.cells = {}  # Dictionary to store only live cells
 
-        # Create a Surface to hlod all live cells
+        # Create a Surface to hold all live cells
         self.cell_surface = pygame.Surface((width, height), pygame.SRCALPHA)
         self.cell_surface.fill((0, 0, 0, 0))  # Make it transparent initially
 
@@ -52,7 +52,6 @@ class Grid:
 
     def fill_random(self):
         """Filling the grid with random 1s and 0s"""
-
         self.cells.clear()
 
         for row in range(self.rows):
